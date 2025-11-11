@@ -43,13 +43,19 @@ async function run() {
         // console.log(reuslt);
     })
     app.get('/availbeFood', async (req,res) => {
-        const cursor = foodsCollection.find().sort({foodQuantity: -1}).limit(6);
+        const cursor = foodsCollection.find( { food_status: 'Available' });
         const reuslt = await cursor.toArray();
         res.send(reuslt);
-        // console.log(reuslt);
+        console.log(reuslt);
     })
 
-
+    app.post('/addFood',(req,res) => {
+      const doc = req.body;
+      const result = foodsCollection.insertOne(doc);
+      res.send(result)
+      console.log(doc);
+      
+    })
 
 
 

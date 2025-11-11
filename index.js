@@ -42,7 +42,12 @@ async function run() {
         res.send(reuslt);
         // console.log(reuslt);
     })
-
+    app.get('/availbeFood', async (req,res) => {
+        const cursor = foodsCollection.find().sort({foodQuantity: -1}).limit(6);
+        const reuslt = await cursor.toArray();
+        res.send(reuslt);
+        // console.log(reuslt);
+    })
 
 
 

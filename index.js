@@ -45,6 +45,7 @@ async function run() {
       res.send(reuslt);
       // console.log(reuslt);
     });
+
     app.get("/availableFoods", async (req, res) => {
       const cursor = foodsCollection.find({ food_status: "Available" });
       const reuslt = await cursor.toArray();
@@ -118,6 +119,16 @@ async function run() {
       //console.log(id, email, food, request);
 
       // res.send(result);
+    });
+
+    app.get("/myReqFood", async (req, res) => {
+      const email = req.query.email;
+      const query = { userEmail: email };
+      const reqFood = reqFoodsCollection.find(query);
+      const result = await reqFood.toArray();
+      res.send(result);
+
+      console.log(email, query, result);
     });
 
     app.patch("/reqFood/:id", async (req, res) => {

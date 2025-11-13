@@ -35,10 +35,13 @@ async function run() {
     const reqFoodsCollection = db.collection("req_foods");
 
     app.get("/featuredFoods", async (req, res) => {
-      const cursor = foodsCollection.find().sort({ foodQuantity: -1 }).limit(6);
-      const reuslt = await cursor.toArray();
-      res.send(reuslt);
-      // console.log(reuslt);
+      const cursor = foodsCollection.aggregate([
+        { $addFields: { foodQuantity: { $toInt: "$foodQuantity" } } },
+        { $sort: { foodQuantity: -1 } },
+        { $limit: 6 },
+      ]);
+      const result = await cursor.toArray();
+      res.send(result);
     });
 
     app.get("/availableFoods", async (req, res) => {

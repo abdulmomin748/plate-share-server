@@ -37,6 +37,7 @@ async function run() {
 
     const db = client.db("plateShareCmDB");
     const foodsCollection = db.collection("foods");
+    const reqFoodsCollection = db.collection("req_foods");
 
     app.get("/featuredFoods", async (req, res) => {
       const cursor = foodsCollection.find().sort({ foodQuantity: -1 }).limit(6);
@@ -55,7 +56,6 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await foodsCollection.findOne(query);
       res.send(result);
-      console.log(cursor);
     });
 
     app.get("/myFoods", async (req, res) => {
@@ -92,11 +92,19 @@ async function run() {
       res.send(result);
     });
 
-    app.post("/addFood", (req, res) => {
+    app.post("/addFood", async (req, res) => {
       const doc = req.body;
-      const result = foodsCollection.insertOne(doc);
+      const result = await foodsCollection.insertOne(doc);
       res.send(result);
       // console.log(doc);
+    });
+
+    app.post("/reqFood", async (req, res) => {
+      const doc = req.body;
+      const result = await reqFoodsCollection.insertOne(doc);
+      res.send(result);
+      console.log(result);
+
     });
   } finally {
     // Ensures that the client will close when you finish/error

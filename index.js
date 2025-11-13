@@ -10,9 +10,7 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.mz4jlxs.mongodb.net/?appName=Cluster0`;
-
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -125,7 +123,7 @@ async function run() {
       const result = await reqFood.toArray();
       res.send(result);
 
-      console.log(email, query, result);
+      // console.log(email, query, result);
     });
 
     app.patch("/reqFood/:id", async (req, res) => {
@@ -149,7 +147,7 @@ async function run() {
         { $set: { food_status: "Donated" } }
       );
       res.send(result);
-      console.log(filter, result);
+      // console.log(filter, result);
     });
     app.patch("/reqFoodRejected/:id", async (req, res) => {
       const id = req.params.id;

@@ -64,7 +64,7 @@ async function run() {
       const cursor = foodsCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
-      console.log(email, query, result);
+      // console.log(email, query, result);
     });
 
     // update food_doc
@@ -82,7 +82,7 @@ async function run() {
         options
       );
       res.send(result);
-      console.log(filter, doc, updateDoc);
+      // console.log(filter, doc, updateDoc);
     });
 
     app.delete("/myFoods/:id", async (req, res) => {
@@ -104,7 +104,58 @@ async function run() {
       const result = await reqFoodsCollection.insertOne(doc);
       res.send(result);
       console.log(result);
+    });
 
+    app.get("/reqFood", async (req, res) => {
+      const id = req.query.id;
+      const email = req.query.email;
+
+      const food = await foodsCollection.findOne({ _id: new ObjectId(id) });
+
+      const request = await reqFoodsCollection.find({ foodId: id }).toArray();
+      res.send(request);
+
+      //console.log(id, email, food, request);
+
+      // res.send(result);
+    });
+
+    app.patch("/reqFood/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDocReqStatus = {
+        $set: {
+          food_status: "Accepted",
+        },
+      };
+      const result = await reqFoodsCollection.updateOne(
+        filter,
+        updateDocReqStatus
+      );
+
+      const request = await reqFoodsCollection.findOne({
+        _id: new ObjectId(id),
+      });
+      await foodsCollection.updateOne(
+        { _id: new ObjectId(request.foodId) },
+        { $set: { food_status: "Donated" } }
+      );
+      res.send(result);
+      console.log(filter, result);
+    });
+    app.patch("/reqFoodRejected/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDocReqStatus = {
+        $set: {
+          food_status: "Rejected",
+        },
+      };
+      const result = await reqFoodsCollection.updateOne(
+        filter,
+        updateDocReqStatus
+      );
+      res.send(result);
     });
   } finally {
     // Ensures that the client will close when you finish/error
